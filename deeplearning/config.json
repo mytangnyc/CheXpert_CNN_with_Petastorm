@@ -1,0 +1,104 @@
+{
+    "name": "ChexpertNet",
+    "n_gpu": 4,
+
+    "arch": {
+        "type": "ChexpertNext1",
+        "args": {
+            "backbone": "densenet121",
+            "num_classes": 14,
+            "norm_type": "BatchNorm",
+            "backbone_cutoff": -1,
+            "pretrained": true,
+            "freeze_pretrain": true,
+            "lse_gamma": 0.5,
+            "fc_bn": true,
+            "fc_drop": 0
+        }
+    },
+    "data_loader": {
+        "type": "PreConvertedChestXpertDataLoader",
+        "args":{
+            "data_set_config": {
+                "label_npy": "/home/kaiyuewang/bdh-spring-2020-project-CheXpert/sample_outputs/data/new_model_val_labels.h5",
+                "image_npy": "/home/kaiyuewang/bdh-spring-2020-project-CheXpert/sample_outputs/data/new_mode_val_image.h5"
+            },
+            "batch_size": 64,
+            "shuffle": true,
+            "validation_split": 0.1,
+            "num_workers": 2
+        }
+    },
+    "data_loader_petastorm_hdf5": {
+        "type": "PetastormDataLoader_hdf5",
+        "args":{
+            "data_set_config": {
+                "data_url": "hdfs://bootcamp.local:9000/user/local/output/"
+            },
+            "batch_size": 64,
+            "shuffle": false,
+            "validation_split": 0.1,
+            "num_workers": 8
+        }
+    },
+    "data_loader_petastorm": {
+        "type": "PetastormDataLoader",
+        "args":{
+            "data_set_config": {
+                "data_url": "hdfs://bootcamp.local:9000/user/local/output/"
+            },
+            "batch_size": 2,
+            "shuffle": false,
+            "validation_split": 0.1,
+            "num_workers": 2
+        }
+    },
+    "optimizer": {
+        "type": "Adam",
+        "args":{
+            "lr": 0.015,
+            "weight_decay": 0,
+            "amsgrad": true
+        }
+    },
+    "loss": "cross_entropy",
+    "metrics": [
+        "multi_target_accuracy",
+        "No_Finding_accuracy",
+        "Enlarged_Cardiomediastinum_acc",
+        "Cardiomegaly_acc",
+        "Lung_Opacity_acc",
+        "Lung_Lesion_acc",
+        "Edema_acc",
+        "Consolidation_acc",
+        "Pneumonia_acc",
+        "Atelectasis_acc",
+        "Pneumothorax_acc",
+        "Pleural_Effusion_acc",
+        "Pleural_Other_acc",
+        "Fracture_acc",
+        "Support_Devices_acc",
+        "avg_recall_score",
+        "avg_auc_metric",
+        "avg_precision_score"
+    ],
+    "lr_scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 50,
+            "gamma": 0.1
+        }
+    },
+    "trainer": {
+        "epochs": 10,
+
+        "save_dir": "saved/",
+        "save_period": 1,
+        "verbosity": 2,
+        
+        "monitor": "min val_loss",
+        "early_stop": 3,
+        "resume": "/home/kaiyuewang/bdh-spring-2020-project-CheXpert/deeplearning/saved/saved-1/models/ChexpertNet/0425_045036/model_best.pth",
+        "tensorboard": true
+    }
+}

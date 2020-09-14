@@ -1,0 +1,69 @@
+{
+    "name": "ChexpertNet",
+    "n_gpu": 1,
+    "arch": {
+        "type": "ChexpertNet",
+        "args": {
+            "global_pool": "AVG_MAX",
+            "backbone": "densenet121",
+            "num_classes": [1,1,1,1,1],
+            "attention_map": "FPA",
+            "norm_type": "BatchNorm",
+            "pretrained": true,
+            "lse_gamma": 0.5,
+            "fc_bn": true,
+            "fc_drop": 0
+        }
+    },
+    "data_loader": {
+        "type": "ChestXpertDataLoader",
+        "args":{
+            "data_set_config": {
+                "data_dir": "/home/kaiyuewang/bdh-spring-2020-project-CheXpert/CheXpert-v1.0-small",
+                "image_size": 225,
+                "enhance_times": 1,
+                "enhance_index": [2,6],
+                "use_transforms_type": "Aug",
+                "use_equalizeHist": true,
+                "fix_ratio": true,
+                "long_side": 512,
+                "border_pad": "pixel_mean",
+                "pixel_mean": 128.0,
+                "gaussian_blur": 3,
+                "use_pixel_std": true,
+                "pixel_std": 64.0
+            },
+            "batch_size": 128,
+            "shuffle": true,
+            "validation_split": 0.1,
+            "num_workers": 2
+        }
+    },
+    "optimizer": {
+        "type": "Adam",
+        "args":{
+            "lr": 0.001,
+            "weight_decay": 0,
+            "amsgrad": true
+        }
+    },
+    "loss": "cross_entropy",
+    "metrics": [
+    ],
+    "lr_scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 50,
+            "gamma": 0.1
+        }
+    },
+    "trainer": {
+        "epochs": 100,
+        "save_dir": "saved/",
+        "save_period": 1,
+        "verbosity": 2,
+        "monitor": "min val_loss",
+        "early_stop": 10,
+        "tensorboard": true
+    }
+}
